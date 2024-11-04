@@ -37,17 +37,23 @@ const userSchema = new Schema<TUser, UserModel>(
     },
     gender: {
       type: String,
-      enum: ['male', 'female', 'other'],
+      enum: {
+        values: ['male', 'female', 'other'],
+      },
       required: true,
     },
     role: {
       type: String,
-      enum: ['admin', 'user'],
+      enum: {
+        values: ['admin', 'user'],
+      },
       default: 'user',
     },
     status: {
       type: String,
-      enum: ['basic', 'premium'],
+      enum: {
+        values: ['basic', 'premium'],
+      },
       default: 'basic',
     },
     address: {

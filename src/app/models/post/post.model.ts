@@ -19,14 +19,18 @@ const postSchema = new Schema<TPost>(
       type: String,
       required: true,
     },
-    upVote: {
-      type: [Schema.Types.ObjectId],
-      ref: 'User',
-    },
-    downVote: {
-      type: [Schema.Types.ObjectId],
-      ref: 'User',
-    },
+    upVotes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    downVotes: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     isPremium: {
       type: Boolean,
       default: false,

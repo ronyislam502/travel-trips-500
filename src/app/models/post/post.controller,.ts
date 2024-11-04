@@ -49,9 +49,49 @@ const deletePost = catchAsync(async (req, res) => {
   });
 });
 
+const upVote = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { user } = req.params;
+  const result = await PostServices.upVotePostIntoDB(id, user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Top 3 posts retrieved successfully',
+    data: result,
+  });
+});
+
+const downVote = catchAsync(async (req, res) => {
+  const { id } = req.params;
+  const { user } = req.params;
+  const result = await PostServices.downVotePostIntoDB(id, user);
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Top 3 posts retrieved successfully',
+    data: result,
+  });
+});
+
+const popularPosts = catchAsync(async (req, res) => {
+  const result = await PostServices.getPopularPostsFromDB();
+
+  sendResponse(res, {
+    statusCode: httpStatus.OK,
+    success: true,
+    message: 'Top 3 posts retrieved successfully',
+    data: result,
+  });
+});
+
 export const PostControllers = {
   createPost,
   getAllPosts,
   deletePost,
   updatePost,
+  popularPosts,
+  upVote,
+  downVote,
 };
