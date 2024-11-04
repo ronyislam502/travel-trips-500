@@ -53,12 +53,22 @@ const userSchema = new Schema<TUser, UserModel>(
     address: {
       type: String,
     },
-    avatar: {
+    image: {
       type: String,
       required: true,
     },
-    following: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-    followers: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+    following: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
+    followers: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'User',
+      },
+    ],
     isDeleted: {
       type: Boolean,
       default: false,
