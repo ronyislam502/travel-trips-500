@@ -1,9 +1,11 @@
-import jwt from "jsonwebtoken";
-import { catchAsyncError } from "../../../utils/catchAsyncError";
-import sendResponse from "../../../utils/sendResponse";
-import { IPaymentTokenInfo } from "./payment.interface";
-import { paymentService } from "./payment.service";
-export const successPaymentController = catchAsyncError(async (req, res) => {
+import jwt from 'jsonwebtoken';
+
+import { IPaymentTokenInfo } from './payment.interface';
+import { paymentService } from './payment.service';
+import catchAsync from '../../utilities/catchAsync';
+import sendResponse from '../../utilities/sendResponse';
+
+const successPaymentController = catchAsync(async (req, res) => {
   const paymentInfoToken = req.query.pt as string;
   let decode;
   try {
@@ -12,7 +14,7 @@ export const successPaymentController = catchAsyncError(async (req, res) => {
     sendResponse(res, {
       data: null,
       success: false,
-      message: "invalid payment info",
+      message: 'invalid payment info',
       statusCode: 400,
     });
   }
@@ -21,11 +23,12 @@ export const successPaymentController = catchAsyncError(async (req, res) => {
   const result = await paymentService.createPayment(
     Number(amount),
     transactionId,
-    userId
+    userId,
   );
   res.send(result);
 });
-export const failedPaymentController = catchAsyncError(async (req, res) => {
+
+const failedPaymentController = catchAsync(async (req, res) => {
   const paymentInfoToken = req.query.pt as string;
   try {
     jwt.verify(paymentInfoToken, process.env.SIGNATURE_KEY as string);
@@ -33,7 +36,7 @@ export const failedPaymentController = catchAsyncError(async (req, res) => {
     sendResponse(res, {
       data: null,
       success: false,
-      message: "invalid payment info",
+      message: 'invalid payment info',
       statusCode: 400,
     });
   }
@@ -41,3 +44,8 @@ export const failedPaymentController = catchAsyncError(async (req, res) => {
   const result = await paymentService.failedPayment();
   res.send(result);
 });
+
+export const PaymentControllers = {
+  successPaymentController,
+  failedPaymentController,
+};

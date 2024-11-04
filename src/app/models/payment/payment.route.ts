@@ -1,11 +1,12 @@
-import { Router } from "express";
-import {
-  failedPaymentController,
-  successPaymentController,
-} from "./payment.controller";
-const router = Router();
-router.post("/success", successPaymentController);
-router.post("/fail", failedPaymentController);
-router.get("/fail", failedPaymentController);
+import { Router } from 'express';
+import { PaymentControllers } from './payment.controller';
 
-export default router;
+const router = Router();
+
+router.post('/success', PaymentControllers.successPaymentController);
+
+router.post('/fail', PaymentControllers.failedPaymentController);
+
+router.get('/fail', PaymentControllers.failedPaymentController);
+
+export const PaymentRoutes = router;

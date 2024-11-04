@@ -3,6 +3,7 @@ import { UserRoutes } from '../models/user/user.route';
 import { PostRoutes } from '../models/post/post.route';
 import { CommentRoutes } from '../models/comment/comment.route';
 import { FollowerRoutes } from '../models/follower/follower.route';
+import { PaymentRoutes } from '../models/payment/payment.route';
 
 const router = Router();
 
@@ -22,6 +23,10 @@ const moduleRoutes = [
   {
     path: '/followers',
     route: FollowerRoutes,
+  },
+  {
+    path: '/payments',
+    route: PaymentRoutes,
   },
 ];
 
