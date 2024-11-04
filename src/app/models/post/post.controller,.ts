@@ -39,7 +39,7 @@ const updatePost = catchAsync(async (req, res) => {
 
 const deletePost = catchAsync(async (req, res) => {
   const { id } = req.params;
-  const result = await PostServices.deletePostFromDB(id);
+  const result = await PostServices.deletePostFromDB(id, req.body);
 
   sendResponse(res, {
     statusCode: httpStatus.OK,

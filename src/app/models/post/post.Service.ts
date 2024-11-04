@@ -28,10 +28,6 @@ const postUpdateIntoDB = async (id: string, payload: Partial<TPost>) => {
   if (!isPostExists) {
     throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
   }
-  const sameUser = isPostExists.user;
-  if (!sameUser) {
-    throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized user');
-  }
 
   const result = await Post.findByIdAndUpdate(id, payload, {
     new: true,
@@ -41,7 +37,17 @@ const postUpdateIntoDB = async (id: string, payload: Partial<TPost>) => {
   return result;
 };
 
-const deletePostFromDB = async (id: string) => {
+const deletePostFromDB = async (id: string, payload: TPost) => {
+  const isExists = await Post.findById(id);
+  if (!isExists) {
+    throw new AppError(httpStatus.NOT_FOUND, 'Post not found');
+  }
+
+  const isUser = payload.user;
+  if (!isUser) {
+    throw new AppError(httpStatus.UNAUTHORIZED, 'unAuthorized access');
+  }
+
   const result = await Post.findByIdAndUpdate(
     id,
     { isDeleted: true },
