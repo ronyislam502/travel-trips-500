@@ -10,7 +10,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(
   cors({
-    origin: ['http://localhost:5173', 'http://localhost:5174'],
+    origin: ['*'],
     credentials: true,
   }),
 );
@@ -18,7 +18,7 @@ app.use(
 app.use('/api', router);
 
 const getController = (req: Request, res: Response) => {
-  res.send('AutoMobile(car)-wash');
+  res.send('Social Travel-Tips');
 };
 
 app.get('/', getController);

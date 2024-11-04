@@ -4,10 +4,15 @@ import { PostRoutes } from '../models/post/post.route';
 import { CommentRoutes } from '../models/comment/comment.route';
 import { FollowerRoutes } from '../models/follower/follower.route';
 import { PaymentRoutes } from '../models/payment/payment.route';
+import { AuthRoutes } from '../models/auth/auth.route';
 
 const router = Router();
 
 const moduleRoutes = [
+  {
+    path: '/auth',
+    route: AuthRoutes,
+  },
   {
     path: '/users',
     route: UserRoutes,
