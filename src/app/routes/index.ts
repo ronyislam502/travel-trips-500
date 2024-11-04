@@ -5,6 +5,7 @@ import { CommentRoutes } from '../models/comment/comment.route';
 import { FollowerRoutes } from '../models/follower/follower.route';
 import { PaymentRoutes } from '../models/payment/payment.route';
 import { AuthRoutes } from '../models/auth/auth.route';
+import { BookingsRoutes } from '../models/booking/booking.route';
 
 const router = Router();
 
@@ -28,6 +29,10 @@ const moduleRoutes = [
   {
     path: '/followers',
     route: FollowerRoutes,
+  },
+  {
+    path: '/bookings',
+    route: BookingsRoutes,
   },
   {
     path: '/payments',

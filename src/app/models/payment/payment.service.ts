@@ -1,37 +1,88 @@
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import Payment from './payment.model';
-import { User } from '../user/user.model';
+import config from '../../config'
+import { Booking } from '../booking/booking.model'
+import { User } from '../user/user.model'
+import { verifyPayment } from './payment.utils'
 
-export const createPayment = async (
-  amount: number,
+const confirmationService = async (
   transactionId: string,
-  userId: string,
+  status: string,
+  paidStatus: string,
 ) => {
-  await Payment.create({
-    amount: amount,
-    transactionId,
-    status: 'Paid',
-  });
+  const verifyResponse = await verifyPayment(transactionId)
 
-  await User.findByIdAndUpdate(userId, {
-    isPremium: true,
-  });
+  if (verifyResponse && verifyResponse?.pay_status === 'Successful') {
+    const bookingInfo = await Booking.find({ tran_id: transactionId })
+    const userId = bookingInfo[0]?.user
+    await User.findByIdAndUpdate(userId, { status: 'premium' }, { new: true })
 
-  const filePath = join(__dirname, '../../templates/success.html');
-  let file = readFileSync(filePath, 'utf-8');
-  file = file.replace('{{link}}', '/');
+    await Booking.findOneAndUpdate(
+      { tran_id: transactionId },
+      {
+        status: paidStatus,
+      },
+      { new: true },
+    )
+  }
 
-  return file;
-};
-export const failedPayment = async () => {
-  const filePath = join(__dirname, '../../templates/error.html');
-  let file = readFileSync(filePath, 'utf-8');
-  file = file.replace('{{link}}', '/');
-  return file;
-};
+  const successTemplate = `
+    <html>
+      <head>
+        <style>
+          body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+          }
+          .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+          }
+          .success {
+            color: #4CAF50;
+          }
+          .cancel {
+            color: #f44336;
+          }
+          .redirect-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            color: #fff;
+          }
+          .success-link {
+            background-color: #4CAF50;
+          }
+          .cancel-link {
+            background-color: #f44336;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <h1 class="${status === 'success' ? 'success' : 'cancel'}">
+            Payment ${status === 'success' ? 'Successful' : 'Canceled'}
+          </h1>
+          <a href="${config.client_live_url_service_page}" class="redirect-link ${status === 'success' ? 'success-link' : 'cancel-link'}">
+            ${status === 'success' ? 'Explore more' : 'Retry Payment'}
+          </a>
+        </div>
+      </body>
+    </html>
+  `
 
-export const paymentService = {
-  createPayment,
-  failedPayment,
-};
+  return successTemplate
+}
+
+export const PaymentServices = {
+  confirmationService,
+}

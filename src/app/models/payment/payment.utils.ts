@@ -1,45 +1,43 @@
-import axios from "axios";
-import jwt from "jsonwebtoken";
-import { IPaymentPayload, IPaymentTokenInfo } from "./payment.interface";
+import axios from 'axios';
+import dotenv from 'dotenv';
+import config from '../../config';
+import { TPaymentInfo } from './payment.interface';
+dotenv.config();
 
-export const initiatePayment = async (
-  payload: IPaymentPayload,
-  userId: string
-) => {
-  const { amount, cus_add, cus_name, cus_phone, cus_email, tran_id } = payload;
-
-  const paymentTokenObj: IPaymentTokenInfo = {
-    transactionId: tran_id,
-    userId,
-    amount: amount.toString(),
-  };
-
-  const PT = jwt.sign(paymentTokenObj, process.env.SIGNATURE_KEY as string, {
-    expiresIn: "1m",
+export const initiatePayment = async (paymentData: TPaymentInfo) => {
+  const res = await axios.post(config.payment_url!, {
+    store_id: config.store_id,
+    tran_id: paymentData.transactionId,
+    success_url: `${config.live_url}/api/payment/confirmation?transactionId=${paymentData.transactionId}&status=success&paidStatus=${paymentData.paidStatus}`,
+    fail_url: `${config.live_url}/api/payment/confirmation?status=failed`,
+    cancel_url: config.client_url,
+    amount: paymentData.amount,
+    currency: 'BDT',
+    signature_key: config.signature_key,
+    desc: 'Merchant Registration Payment',
+    cus_name: paymentData.userName,
+    cus_email: paymentData.userEmail,
+    cus_add1: paymentData.userAddress,
+    cus_add2: 'N/A',
+    cus_city: 'N/A',
+    cus_state: 'N/A',
+    cus_postcode: 'N/A',
+    cus_country: 'Bangladesh',
+    cus_phone: paymentData.userPhone,
+    type: 'json',
   });
 
-  // const url = "https://onthego-backend.vercel.app/api/v1"
-  const url = "http://localhost:5000/api/v1";
+  return res.data;
+};
 
-  const response = await axios.post(`${process.env.PAYMENT_URL}`, {
-    store_id: process.env.STORE_ID,
-    signature_key: process.env.SIGNATURE_KEY,
-    cus_name,
-    cus_email,
-    cus_phone,
-    cus_add1: cus_add,
-    cus_add2: "N/A",
-    cus_city: "N/A",
-    cus_country: "Bangladesh",
-    currency: "BDT",
-    amount,
-    tran_id,
-    success_url: `${url}/payment/success?pt=${PT}`,
-    fail_url: `${url}/payment/fail?pt=${PT}`,
-    cancel_url: `${url}/payment/fail?pt=${PT}`,
-    desc: "Course Fee",
-    type: "json",
+export const verifyPayment = async (transactionId: string) => {
+  const response = await axios.get(config.payment_verify_url!, {
+    params: {
+      store_id: config.store_id,
+      signature_key: config.signature_key,
+      type: 'json',
+      request_id: transactionId,
+    },
   });
-
   return response.data;
 };
