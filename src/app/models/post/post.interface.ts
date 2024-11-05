@@ -5,8 +5,8 @@ export type TPost = {
   content: string;
   image?: string;
   categories: string;
-  upVote: Types.ObjectId[];
-  downVote: Types.ObjectId[];
-  isPremium: boolean;
+  upVotes: Types.ObjectId[];
+  downVotes: Types.ObjectId[];
+  tags: 'premium' | 'everyone';
   isDeleted: boolean;
 };

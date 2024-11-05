@@ -31,9 +31,12 @@ const postSchema = new Schema<TPost>(
         ref: 'User',
       },
     ],
-    isPremium: {
-      type: Boolean,
-      default: false,
+    tags: {
+      type: String,
+      enum: {
+        values: ['premium', 'everyone'],
+      },
+      default: 'everyone',
     },
   },
   {

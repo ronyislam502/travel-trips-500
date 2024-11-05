@@ -5,6 +5,8 @@ const router = express.Router();
 
 router.post('/follow', FollowerControllers.followByUser);
 
-router.delete('/unFollow', FollowerControllers.unFollowByUser);
+router.get('/followers', FollowerControllers.getFollowers);
+
+router.get('/followings', FollowerControllers.getFollowings);
 
 export const FollowerRoutes = router;
