@@ -3,7 +3,7 @@ import { UserControllers } from './user.controller';
 
 const router = express.Router();
 
-router.get('/:id', UserControllers.getAllUsers);
+router.get('/', UserControllers.getAllUsers);
 
 router.patch('/update/:id', UserControllers.updateUser);
 
